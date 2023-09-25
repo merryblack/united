@@ -10,16 +10,24 @@ public class Player : MonoBehaviour
     private float vAxis;
     private float jumpPower;
     private bool isJumpBtnDown;
-    private bool isJumping;
+    private bool isJumping = false;
+    private bool isWalking = false;
 
     private Vector3 moveVec;
     private Animator anim;
     private Rigidbody rigid;
 
+    private float scoreNow = 0;
+    private float scoreAll;
+
+    public AudioClip foodGetSound;
+    private AudioSource audioDefaultWalkSound;
+
     void Awake()
     {
         rigid = GetComponent<Rigidbody>();
         anim = GetComponentInChildren<Animator>();
+        audioDefaultWalkSound = GetComponent<AudioSource>();
     }
 
     void Start()
@@ -43,6 +51,16 @@ public class Player : MonoBehaviour
         }
     }
 
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.gameObject.tag == "Food")
+        {
+            audioDefaultWalkSound.PlayOneShot(foodGetSound);
+            scoreNow += 1;
+            other.gameObject.SetActive(false);
+        }
+    }
+
     private void HandleWalk()
     {
         hAxis = Input.GetAxisRaw("Horizontal");
@@ -54,6 +72,19 @@ public class Player : MonoBehaviour
         transform.LookAt(transform.position + moveVec);
         
         anim.SetBool("isWalking", moveVec != Vector3.zero);
+
+        if (moveVec != Vector3.zero && !isWalking)
+        {
+            isWalking = true;
+            anim.SetBool("isWalking", true);
+            audioDefaultWalkSound.Play();
+        }
+        else if (moveVec == Vector3.zero && isWalking)
+        {
+            isWalking = false;
+            anim.SetBool("isWalking", false);
+            audioDefaultWalkSound.Stop();
+        }
     }
 
     private void HandleJump()

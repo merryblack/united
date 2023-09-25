@@ -9,12 +9,4 @@ public class Foods : MonoBehaviour
     {
         transform.Rotate(Vector3.up * 30 * Time.deltaTime, Space.World);
     }
-
-    void OnTriggerEnter(Collider other)
-    {
-        if (other.name == "Player")
-        {
-            gameObject.SetActive(false);
-        }
-    }
 }
