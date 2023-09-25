@@ -30,6 +30,21 @@ public class Player : MonoBehaviour
 
     void Update()
     {
+        HandleWalk();
+        HandleJump();
+    }
+
+    private void OnCollisionEnter(Collision other)
+    {
+        if (other.gameObject.tag == "Ground")
+        {
+            isJumping = false;
+            anim.SetBool("isJumping", false);
+        }
+    }
+
+    private void HandleWalk()
+    {
         hAxis = Input.GetAxisRaw("Horizontal");
         vAxis = Input.GetAxisRaw("Vertical");
 
@@ -39,7 +54,10 @@ public class Player : MonoBehaviour
         transform.LookAt(transform.position + moveVec);
         
         anim.SetBool("isWalking", moveVec != Vector3.zero);
+    }
 
+    private void HandleJump()
+    {
         isJumpBtnDown = Input.GetButtonDown("Jump");
 
         if (isJumpBtnDown && !isJumping)
@@ -47,15 +65,6 @@ public class Player : MonoBehaviour
             isJumping = true;
             rigid.AddForce(Vector3.up * jumpPower, ForceMode.Impulse);
             anim.SetBool("isJumping", true);
-        }
-    }
-
-    private void OnCollisionEnter(Collision other)
-    {
-        if (other.gameObject.tag == "Ground")
-        {
-            isJumping = false;
-            anim.SetBool("isJumping", false);
         }
     }
 }
